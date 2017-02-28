@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 set -x
-set -e
+set -o errexit
+set -o pipefail
+set -o nounset
 
-BP=$BACKUP_PATH/shell/bash/
+bash_backup_path=$BACKUP_PATH/shell/bash/
+source_dir=$(dirname "$0")
 files=".bash_prompt .bash_profile"
-SRCDIR=$(dirname "$0")
 
 function backup_bash_config() {
-   echo "backing up to $BP"
+   echo "backing up to $bash_backup_path"
    for file in $files; do
       echo " - $file"
-      cp ~/$file $BP
+      cp ~/$file $bash_backup_path
    done 
 }
 
@@ -19,16 +21,16 @@ function install_bash_config() {
    echo "installing"
    for file in $files; do
       echo " - $file"
-      cp $SRCDIR/$file ~/
+      cp $source_dir/$file ~/
    done 
 
 }
 
 function restore_bash_config() {
-   echo "restoring from $BP"
+   echo "restoring from $bash_backup_path"
    for file in $files; do
       echo " - $file"
-      cp $BP/$file ~/
+      cp $bash_backup_path/$file ~/
    done 
 }
 
@@ -36,7 +38,7 @@ function restore_bash_config() {
 if [[ "$1" == "restore" ]]; then  
   restore_bash_config
 else
-  mkdir -p $BP
+  mkdir -p $bash_backup_path
   backup_bash_config
   install_bash_config
 fi
