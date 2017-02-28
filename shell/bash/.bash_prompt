@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Description:
-# ------------
 # Bash prompt by barney-s
 # https://github.com/barney-s/dotfiles
 # 
@@ -44,12 +42,11 @@
 #
 # Unicode Characters:
 # -------------------
-# • ▶ → ⚡ 
-#
+# • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
 #
 
 ## --------- Pallete for help with colors --------------
-palette() {
+term_palette() {
   per_line=8
   count=1
 
@@ -88,7 +85,7 @@ if tput setaf 1 &> /dev/null; then
     blue="\[$(tput setaf 27)\]"
     white="\[$(tput setaf 7)\]"
     cyan="\[$(tput setaf 39)\]"
-    green="\[$(tput setaf 76)\]"
+    green="\[$(tput setaf 34)\]"
     purple="\[$(tput setaf 129)\]"
     yellow="\[$(tput setaf 154)\]"
     red="\[$(tput setaf 9)\]"
@@ -121,8 +118,7 @@ fi
 
 ##-------------- GIT helper functions ---------------------
 
-function _git_info()
-{
+function _git_branch() {
   local branch
   ref="$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///')"
   if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null); then
@@ -132,6 +128,34 @@ function _git_info()
     echo $branch
   else
     echo ""
+  fi
+}
+
+function _git_dirty() {
+  if [[ -n "$(git status --porcelain 2> /dev/null)" ]]; then
+    echo 1
+  fi
+}
+
+function _git_status() {
+  dirty_branch="$(_git_dirty)"
+
+  #  • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
+  if [[ "$dirty_branch" == 1 ]]; then
+    echo "${red}•${reset}"
+  else # clean
+    echo "${green}•${reset}"
+  fi
+}
+
+_git_info () {
+  local output="$(_git_branch)"
+
+  if [[ "$output" != "" ]]; then
+    # Add on the git status
+    output="$output$(_git_status)"
+    # Echo our output
+    echo "$output"
   fi
 }
 
