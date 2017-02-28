@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+# Description:
+# ------------
+# Bash prompt by barney-s
+# https://github.com/barney-s/dotfiles
+# 
+# Attribution:
+# ------------
+# github sources: twolfson/sexy-bash-prompt, ronakg/dotfiles
+# http://www.thegeekstuff.com/2008/09/bash-shell-take-control-of-ps1-ps2-ps3-ps4-and-prompt_command
+# http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/clockt.html
+# http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+# http://askubuntu.com/questions/17723/trim-the-terminal-command-prompt-working-directory
+#
+# Prompt Escape Sequence Quick Reference:
+# ---------------------------------------
+# \a  an ASCII bell character (07)
+# \d  the date  in  "Weekday  Month  Date"  format (e.g., "Tue May 26")
+# \e  an ASCII escape character (033)
+# \h  the hostname up to the first `.'
+# \H  the hostname
+# \j  the  number of jobs currently managed by the shell
+# \l  the basename of the shell's terminal  device name
+# \n  newline
+# \r  carriage return
+# \s  the  name  of  the shell, the basename of $0 (the portion following the final slash)
+# \t  the current time in 24-hour HH:MM:SS format
+# \T  the current time in 12-hour HH:MM:SS format
+# \@  the current time in 12-hour am/pm format
+# \u  the username of the current user
+# \v  the version of bash (e.g., 2.00)
+# \V  the release of bash,  version+patchlevel (e.g., 2.00.0)
+# \w  the current working directory
+# \W  the  basename  of the current working directory
+# \!  the history number of this command
+# \#  the command number of this command
+# \$  if the effective UID is 0, a #, otherwise  a $
+# \nnn  the  character  corresponding  to  the octal number nnn
+# \\  a backslash
+# \[  begin a sequence of non-printing characters,
+#     which could be used to embed a terminal control sequence into the prompt
+# \]  end a sequence of non-printing characters
+#
+#
+# Unicode Characters:
+# -------------------
+# • ▶ → ⚡ 
+#
+#
+
+## --------- Pallete for help with colors --------------
+palette() {
+  per_line=8
+  count=1
+
+  if tput setaf 1 &> /dev/null; then
+    for i in $(seq 0 $(tput colors)); do
+      echo -n " $(tput setaf $i)$i$(tput sgr0) $(tput bold)$(tput setaf $i)$i$(tput sgr0) $(tput sgr 0 1)$(tput setaf $i)$i$(tput sgr0)"
+      count=$((count+1))
+      if [ $count -gt $per_line ]; then
+         echo
+         count=1
+      fi
+    done
+  else
+    for i in $(seq 0 109); do
+      echo -n -e "\033[1;${i}mText$(tput sgr0) "
+      echo "\033[1;${i}m"
+    done
+  fi
+  echo
+}
+
+## --------- Define Colors --------------
+
+# If we are on a colored terminal
+if tput setaf 1 &> /dev/null; then
+  # Reset the shell from our `if` check
+  tput sgr0 &> /dev/null
+
+  # Save common color actions
+  bold="\[$(tput bold)\]"
+  reset="\[$(tput sgr0)\]"
+  normal="\[$(tput bold)\]"
+
+  # If the terminal supports at least 256 colors, write out our 256 color based set
+  if [[ "$(tput colors)" -ge 256 ]] &> /dev/null; then
+    blue="\[$(tput setaf 27)\]"
+    white="\[$(tput setaf 7)\]"
+    cyan="\[$(tput setaf 39)\]"
+    green="\[$(tput setaf 76)\]"
+    purple="\[$(tput setaf 129)\]"
+    yellow="\[$(tput setaf 154)\]"
+    red="\[$(tput setaf 9)\]"
+    gray="\[$(tput setaf 246)\]"
+  else
+  # Otherwise, use colors from our set of 8
+    blue="\[$(tput setaf 4)\]"
+    purple="\[$(tput setaf 5)\]"
+    white="\[$(tput setaf 7)\]"
+    cyan="\[$(tput setaf 6)\]"
+    green="\[$(tput setaf 2)\]"
+    yellow="\[$(tput setaf 3)\]"
+    red="\[$(tput setaf 1)\]"
+    gray="\[$(tput setaf 8)\]"
+  fi
+else
+  bold=""
+  reset="\033[m"
+  blue="\033[1;34m"
+  white="\033[1;37m"
+  cyan="\033[1;36m"
+  purple="\033[1;36m"
+  green="\033[1;32m"
+  yellow="\033[1;33m"
+  red="\033[1;31m"
+  gray="\033[1;31m"
+  normal=""
+fi
+
+function _git_info()
+{
+  local branch
+  ref="$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///')"
+  if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null); then
+    if [[ "$branch" == "HEAD" ]]; then
+       branch='detached'
+    fi
+    echo $branch
+  else
+    echo ""
+  fi
+}
+
+function _pwd() {
+  if [ $(pwd | grep -o '/' | wc -l) -gt 5 ]; then
+    #pwd | sed -e "s|/([^/]{,2})[^/]*|/\1|g"
+    pwd | sed -e "s@$HOME@~@" | sed -E "s@([^/])[^/]+/@\1/@g"
+  else
+    pwd
+  fi
+}
+
+function _prompt2
+{
+  local sep="${gray}\[|\]${reset}"
+  local endchar="${blue}\n▶ ${reset}"
+  local user="${blue}\u${sep}"
+  local host=$(hostname)
+  local host="${cyan}\h${sep}"
+  local gitinfo="${purple}$(_git_info)${sep}"
+  local dirinfo="${blue}\w${sep}"
+  PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
+}
+
+
+
+function _prompt 
+{
+  local hostlen=6
+  local userlen=4
+  local sep="${gray}\[|\]${reset}"
+  local endchar="${blue}\n▶ ${reset}"
+  local user=$(whoami)
+  local user="${blue}${user:0:$userlen}${sep}"
+  local host=$(hostname)
+  local host="${cyan}${host: -$hostlen}${sep}"
+  local gitinfo="${purple}$(_git_info)${sep}"
+  local dirinfo="${blue}$(_pwd)${sep}"
+  PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
+}
+
+PROMPT_COMMAND=_prompt2
+export PS2="${blue}... ${reset}"
