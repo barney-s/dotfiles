@@ -118,6 +118,9 @@ else
   normal=""
 fi
 
+
+##-------------- GIT helper functions ---------------------
+
 function _git_info()
 {
   local branch
@@ -132,6 +135,8 @@ function _git_info()
   fi
 }
 
+## ----------------- directory helper functions ------------
+
 function _pwd() {
   if [ $(pwd | grep -o '/' | wc -l) -gt 5 ]; then
     #pwd | sed -e "s|/([^/]{,2})[^/]*|/\1|g"
@@ -141,7 +146,10 @@ function _pwd() {
   fi
 }
 
-function _prompt2
+
+## ------------------ defining PS1 prompt function ---------------------
+
+function _prompt_wide
 {
   local sep="${gray}\[|\]${reset}"
   local endchar="${blue}\n▶ ${reset}"
@@ -153,14 +161,12 @@ function _prompt2
   PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
 }
 
-
-
-function _prompt 
+function _prompt_short
 {
   local hostlen=6
   local userlen=4
   local sep="${gray}\[|\]${reset}"
-  local endchar="${blue}\n▶ ${reset}"
+  local endchar="${blue}▶ ${reset}"
   local user=$(whoami)
   local user="${blue}${user:0:$userlen}${sep}"
   local host=$(hostname)
@@ -170,5 +176,16 @@ function _prompt
   PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
 }
 
-PROMPT_COMMAND=_prompt2
-export PS2="${blue}... ${reset}"
+
+## --------------- setting prompts ---------------------
+if [[ "$PROMPT_SIZE" == "wide" ]]; then
+  export PS2="${blue}... ${reset}"
+  export PS3="$(tput setaf 12)(select): $(tput sgr0)"
+  export PS4="$(tput setaf 3)\t|\u|$0|\$LINENO++ $(tput sgr0)"
+  PROMPT_COMMAND=_prompt_wide
+else
+  export PS2="${blue}> ${reset}"
+  export PS3="$(tput setaf 12)#? $(tput sgr0)"
+  export PS4="$(tput setaf 3)\t|\$LINENO+ $(tput sgr0)"
+  PROMPT_COMMAND=_prompt_short
+fi
