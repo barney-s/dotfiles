@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+#set -x
 set -o errexit
 set -o pipefail
 set -o nounset
@@ -9,7 +9,7 @@ source_dir=$(dirname "$0")
 files=".bash_prompt .bash_profile"
 
 function backup_bash_config() {
-   echo "backing up to $bash_backup_path"
+   echo "backing-up current dotfiles"
    for file in $files; do
       echo " - $file"
       cp ~/$file $bash_backup_path
@@ -18,7 +18,7 @@ function backup_bash_config() {
 
 
 function install_bash_config() {
-   echo "installing"
+   echo "installing dotfiles"
    for file in $files; do
       echo " - $file"
       cp $source_dir/$file ~/
