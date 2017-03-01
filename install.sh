@@ -28,16 +28,46 @@ exit $1
 }
 
 
+source_dir=$(dirname "$0")
+shells="bash"
+files=".gitignore .gitconfig"
+
+function backup_config_files() {
+   echo "backing-up current dotfiles"
+   for file in $files; do
+      echo " - $file"
+      cp ~/$file $BACKUP_PATH || true
+   done 
+}
+
+function install_config_files() {
+   echo "installing dotfiles"
+   for file in $files; do
+      echo " - $file"
+      cp $source_dir/$file ~/
+   done 
+}
+
+function restore_config_files() {
+   echo "restoring from $BACKUP_PATH"
+   for file in $files; do
+      echo " - $file"
+      cp $BACKUP_PATH/$file ~/
+   done 
+}
+
 
 
 function _install() {
   export BACKUP_PATH="/tmp/dotfiles-$(date +%y%m%d.%H%M%S)"
   mkdir -p $BACKUP_PATH
-  for shell in bash;
+  for shell in $shells;
   do 
     echo "Installing shell $shell"
     shell/$shell/install.sh "install"
   done
+  backup_config_files
+  install_config_files
   echo "backedup existing dotfiles to: $BACKUP_PATH"
 }
 
@@ -45,11 +75,12 @@ function _install() {
 function _restore() {
   export BACKUP_PATH=$1
   echo "restoring from $BACKUP_PATH"
-  for shell in bash;
+  for shell in $shells;
   do 
     echo "Restoring shell $shell"
     shell/$shell/install.sh "restore"
   done
+  restore_config_files
 }
 
 
