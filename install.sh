@@ -29,43 +29,52 @@ exit $1
 
 
 source_dir=$(dirname "$0")
-shells="bash"
-files=".gitignore .gitconfig"
+install_list="install.list"
 
 function backup_config_files() {
-   echo "backing-up current dotfiles"
-   for file in $files; do
-      echo " - $file"
-      cp ~/$file $BACKUP_PATH || true
-   done 
+  echo "backing up:"
+  while read line || [[ -n "$line" ]]; do
+    src=$(echo $line | awk '{print $1}')
+    dst=$(echo $line | awk '{print $2}')
+    dst=${dst/#\~/$HOME}
+    srcpath=$(dirname $src)
+    mkdir -p $BACKUP_PATH/$srcpath
+    if [ -f $dst ]; then
+      echo "  - $dst"
+      cp $dst $BACKUP_PATH/$srcpath
+    fi
+  done < $source_dir/$install_list
 }
 
 function install_config_files() {
-   echo "installing dotfiles"
-   for file in $files; do
-      echo " - $file"
-      cp $source_dir/$file ~/
-   done 
+  echo "installing:"
+  while read line || [[ -n "$line" ]]; do
+    src=$(echo $line | awk '{print $1}')
+    dst=$(echo $line | awk '{print $2}')
+    dst=${dst/#\~/$HOME}
+    echo "  + $dst"
+    cp $src $dst
+  done < $source_dir/$install_list
 }
 
 function restore_config_files() {
-   echo "restoring from $BACKUP_PATH"
-   for file in $files; do
-      echo " - $file"
-      cp $BACKUP_PATH/$file ~/
-   done 
+  echo "restoring from $BACKUP_PATH:"
+  while read line || [[ -n "$line" ]]; do
+    src=$(echo $line | awk '{print $1}')
+    dst=$(echo $line | awk '{print $2}')
+    dst=${dst/#\~/$HOME}
+    srcpath=$(basename $src)
+    if [ -f $BACKUP_PATH/$src ]; then
+       echo "  * $dst"
+       cp $BACKUP_PATH/$src $dst
+    fi
+  done < $source_dir/$install_list
 }
-
 
 
 function _install() {
   export BACKUP_PATH="/tmp/dotfiles-$(date +%y%m%d.%H%M%S)"
   mkdir -p $BACKUP_PATH
-  for shell in $shells;
-  do 
-    echo "Installing shell $shell"
-    shell/$shell/install.sh "install"
-  done
   backup_config_files
   install_config_files
   echo "backedup existing dotfiles to: $BACKUP_PATH"
@@ -74,12 +83,6 @@ function _install() {
 
 function _restore() {
   export BACKUP_PATH=$1
-  echo "restoring from $BACKUP_PATH"
-  for shell in $shells;
-  do 
-    echo "Restoring shell $shell"
-    shell/$shell/install.sh "restore"
-  done
   restore_config_files
 }
 

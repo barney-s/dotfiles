@@ -1,0 +1,5 @@
+shell/bash/.bash_profile     ~/.bash_profile
+shell/bash/.bash_prompt      ~/.bash_prompt
+git/.gitconfig               ~/.gitconfig
+git/.gitignore               ~/.gitignore
+tmux/.tmux.conf              ~/.tmux.conf
