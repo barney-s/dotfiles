@@ -1,0 +1,6 @@
+- gitconfig cleanup aliases
+- gitconfig add pretty diff
+- tmux cleanup config
+- vim setup
+- tmux git-info in bar
+- if tmux gitinfo, revisit PS1 prompt
