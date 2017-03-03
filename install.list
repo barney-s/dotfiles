@@ -3,4 +3,4 @@ shell/bash/.bash_prompt      ~/.bash_prompt
 git/.gitconfig               ~/.gitconfig
 git/.gitignore               ~/.gitignore
 .tmux/.tmux.conf             ~/.tmux.conf
-.tmux/.tmux.conf.local       ~/.tmux.conf.local
+tmux/.tmux.conf.local        ~/.tmux.conf.local
