@@ -69,70 +69,56 @@ palette_dump() {
 }
 
 
-# wrap in function to avoid setting too many variables for the user shell
-__powerline() {
-
+__setup_bash_prompt() {
   readonly BLOCK_START=''
+  readonly MAX_PATH_LENGTH=30
+  if tput setaf 1 &> /dev/null; then
+     tput sgr0 &> /dev/null
+     readonly PROMPT_COLORS="256"
+  else
+     readonly PROMPT_COLORS="ANSI"
+  fi
 
   # -- colors definition ---------------------------------------------------------
-  
-  # If we are on a colored terminal
-  if tput setaf 1 &> /dev/null; then
-    # Reset the shell from our `if` check
-    tput sgr0 &> /dev/null
-  
-    # Save common color actions
-    bold="\[$(tput bold)\]"
-    reset="\[$(tput sgr0)\]"
-    normal="\[$(tput bold)\]"
-  
-    # If the terminal supports at least 256 colors, write out our 256 color based set
-    if [[ "$(tput colors)" -ge 256 ]] &> /dev/null; then
-      blue="\[$(tput setaf 27)\]"
-      white="\[$(tput setaf 7)\]"
-      cyan="\[$(tput setaf 39)\]"
-      green="\[$(tput setaf 34)\]"
-      purple="\[$(tput setaf 129)\]"
-      yellow="\[$(tput setaf 154)\]"
-      red="\[$(tput setaf 9)\]"
-      gray="\[$(tput setaf 246)\]"
-    else
-    # Otherwise, use colors from our set of 8
-      blue="\[$(tput setaf 4)\]"
-      purple="\[$(tput setaf 5)\]"
-      white="\[$(tput setaf 7)\]"
-      cyan="\[$(tput setaf 6)\]"
-      green="\[$(tput setaf 2)\]"
-      yellow="\[$(tput setaf 3)\]"
-      red="\[$(tput setaf 1)\]"
-      gray="\[$(tput setaf 8)\]"
-    fi
-  else
-    bold=""
-    reset="\033[m"
-    blue="\033[1;34m"
-    white="\033[1;37m"
-    cyan="\033[1;36m"
-    purple="\033[1;36m"
-    green="\033[1;32m"
-    yellow="\033[1;33m"
-    red="\033[1;31m"
-    gray="\033[1;31m"
-    normal=""
-  fi
-  
-  readonly MAX_PATH_LENGTH=30
-
   _color() {
     if [[ ! -z "$1" ]]; then
-      echo -n "\[$(tput setaf "$1")\]"
+      if [[ "$PROMPT_COLORS" == "256" ]]; then
+         echo -n "\[$(tput setaf "$1")\]"
+      else
+         echo "\033[1;$1m"
+      fi
     fi
     if [[ ! -z "$2" ]]; then
-      echo -n "\[$(tput setab "$2")\]"
+      if [[ "$PROMPT_COLORS" == "256" ]]; then
+         echo -n "\[$(tput setab "$2")\]"
+      else
+         echo "\033[1;$2m"
+      fi
     fi
   }
+ 
+  # If we are on a colored terminal
+  if [[ "$PROMPT_COLORS" == "256" ]]; then
+    # Save common color actions
+    readonly bold="\[$(tput bold)\]"
+    readonly reset="\[$(tput sgr0)\]"
+    readonly normal="\[$(tput bold)\]"
+  else
+    readonly bold=""
+    readonly reset="\033[m"
+    readonly blue="\033[1;34m"
+    readonly white="\033[1;37m"
+    readonly cyan="\033[1;36m"
+    readonly purple="\033[1;36m"
+    readonly green="\033[1;32m"
+    readonly yellow="\033[1;33m"
+    readonly red="\033[1;31m"
+    readonly gray="\033[1;31m"
+    readonly normal=""
+  fi
+  
+  # -- prompt helper -------------------------------------------------------------
 
-  # -- prompt blocks helper ------------------------------------------------------
   _prompt() {
     # fg, bg, text 
     local block
@@ -230,7 +216,7 @@ __powerline() {
   }
   
   function _end_block() {
-    local end="\n▶"
+    local end="\n${bold}→ ${reset}"
     if [[ "$PROMPT_SIZE" != "wide" ]]; then
       end=""
     fi
@@ -282,5 +268,5 @@ __powerline() {
 
 }
 
-__powerline
-unset __powerline
+__setup_bash_prompt
+unset __setup_bash_prompt

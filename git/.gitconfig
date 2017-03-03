@@ -1,6 +1,6 @@
-#[user]
-#  email = @gmail.com
-#  name = Barni S
+[user]
+  email = bharanis78@gmail.com
+  name = Barni S
 
 [github]
   user = barney-s
