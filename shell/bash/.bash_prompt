@@ -69,6 +69,12 @@ palette_dump() {
 }
 
 
+palette_print() {
+  echo "$(tput setaf $1)$(tput setab $2)$3$(tput sgr0)"
+}
+
+
+
 __setup_bash_prompt() {
   readonly BLOCK_START=''
   readonly MAX_PATH_LENGTH=30
@@ -162,7 +168,7 @@ __setup_bash_prompt() {
       if [[ "$branch" == "HEAD" ]]; then
          branch='detached'
       fi
-      echo "$branch"
+      echo "$branch"
     else
       echo ""
     fi
@@ -186,7 +192,7 @@ __setup_bash_prompt() {
   
   _git_info () {
     _section=''
-    branch=$(_git_branch)
+    branch="$(_git_branch)"
     if [[ "$branch" != "" ]]; then
       dirty_branch="$(_git_dirty)"
       if [[ "$dirty_branch" == 1 ]]; then
@@ -194,7 +200,7 @@ __setup_bash_prompt() {
       else 
          c=150
       fi
-      _prompt 239 $c $branch
+      _prompt 234 $c " $branch"
     fi
   }
   
