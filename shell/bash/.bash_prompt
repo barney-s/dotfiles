@@ -2,16 +2,17 @@
 # Bash prompt by barney-s
 # https://github.com/barney-s/dotfiles
 # 
-# Attribution:
-# ------------
+# -- attribution ---------------------------------------------------------------
+#
 # github sources: twolfson/sexy-bash-prompt, ronakg/dotfiles
 # http://www.thegeekstuff.com/2008/09/bash-shell-take-control-of-ps1-ps2-ps3-ps4-and-prompt_command
+# https://github.com/undu/bash-powerline
 # http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/clockt.html
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
 # http://askubuntu.com/questions/17723/trim-the-terminal-command-prompt-working-directory
 #
-# Prompt Escape Sequence Quick Reference:
-# ---------------------------------------
+# -- quick reference -----------------------------------------------------------
+#
 # \a  an ASCII bell character (07)
 # \d  the date  in  "Weekday  Month  Date"  format (e.g., "Tue May 26")
 # \e  an ASCII escape character (033)
@@ -39,14 +40,13 @@
 #     which could be used to embed a terminal control sequence into the prompt
 # \]  end a sequence of non-printing characters
 #
+# -- unicode characters --------------------------------------------------------
 #
-# Unicode Characters:
-# -------------------
 # • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
 #
 
-## --------- Pallete for help with colors --------------
-term_palette() {
+# -- palettes function ---------------------------------------------------------
+palette_dump() {
   per_line=8
   count=1
 
@@ -68,148 +68,219 @@ term_palette() {
   echo
 }
 
-## --------- Define Colors --------------
 
-# If we are on a colored terminal
-if tput setaf 1 &> /dev/null; then
-  # Reset the shell from our `if` check
-  tput sgr0 &> /dev/null
+# wrap in function to avoid setting too many variables for the user shell
+__powerline() {
 
-  # Save common color actions
-  bold="\[$(tput bold)\]"
-  reset="\[$(tput sgr0)\]"
-  normal="\[$(tput bold)\]"
+  readonly BLOCK_START=''
 
-  # If the terminal supports at least 256 colors, write out our 256 color based set
-  if [[ "$(tput colors)" -ge 256 ]] &> /dev/null; then
-    blue="\[$(tput setaf 27)\]"
-    white="\[$(tput setaf 7)\]"
-    cyan="\[$(tput setaf 39)\]"
-    green="\[$(tput setaf 34)\]"
-    purple="\[$(tput setaf 129)\]"
-    yellow="\[$(tput setaf 154)\]"
-    red="\[$(tput setaf 9)\]"
-    gray="\[$(tput setaf 246)\]"
-  else
-  # Otherwise, use colors from our set of 8
-    blue="\[$(tput setaf 4)\]"
-    purple="\[$(tput setaf 5)\]"
-    white="\[$(tput setaf 7)\]"
-    cyan="\[$(tput setaf 6)\]"
-    green="\[$(tput setaf 2)\]"
-    yellow="\[$(tput setaf 3)\]"
-    red="\[$(tput setaf 1)\]"
-    gray="\[$(tput setaf 8)\]"
-  fi
-else
-  bold=""
-  reset="\033[m"
-  blue="\033[1;34m"
-  white="\033[1;37m"
-  cyan="\033[1;36m"
-  purple="\033[1;36m"
-  green="\033[1;32m"
-  yellow="\033[1;33m"
-  red="\033[1;31m"
-  gray="\033[1;31m"
-  normal=""
-fi
-
-
-##-------------- GIT helper functions ---------------------
-
-function _git_branch() {
-  local branch
-  ref="$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///')"
-  if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null); then
-    if [[ "$branch" == "HEAD" ]]; then
-       branch='detached'
+  # -- colors definition ---------------------------------------------------------
+  
+  # If we are on a colored terminal
+  if tput setaf 1 &> /dev/null; then
+    # Reset the shell from our `if` check
+    tput sgr0 &> /dev/null
+  
+    # Save common color actions
+    bold="\[$(tput bold)\]"
+    reset="\[$(tput sgr0)\]"
+    normal="\[$(tput bold)\]"
+  
+    # If the terminal supports at least 256 colors, write out our 256 color based set
+    if [[ "$(tput colors)" -ge 256 ]] &> /dev/null; then
+      blue="\[$(tput setaf 27)\]"
+      white="\[$(tput setaf 7)\]"
+      cyan="\[$(tput setaf 39)\]"
+      green="\[$(tput setaf 34)\]"
+      purple="\[$(tput setaf 129)\]"
+      yellow="\[$(tput setaf 154)\]"
+      red="\[$(tput setaf 9)\]"
+      gray="\[$(tput setaf 246)\]"
+    else
+    # Otherwise, use colors from our set of 8
+      blue="\[$(tput setaf 4)\]"
+      purple="\[$(tput setaf 5)\]"
+      white="\[$(tput setaf 7)\]"
+      cyan="\[$(tput setaf 6)\]"
+      green="\[$(tput setaf 2)\]"
+      yellow="\[$(tput setaf 3)\]"
+      red="\[$(tput setaf 1)\]"
+      gray="\[$(tput setaf 8)\]"
     fi
-    echo $branch
   else
-    echo ""
+    bold=""
+    reset="\033[m"
+    blue="\033[1;34m"
+    white="\033[1;37m"
+    cyan="\033[1;36m"
+    purple="\033[1;36m"
+    green="\033[1;32m"
+    yellow="\033[1;33m"
+    red="\033[1;31m"
+    gray="\033[1;31m"
+    normal=""
   fi
-}
+  
+  readonly MAX_PATH_LENGTH=30
 
-function _git_dirty() {
-  if [[ -n "$(git status --porcelain 2> /dev/null)" ]]; then
-    echo 1
-  fi
-}
+  _color() {
+    if [[ ! -z "$1" ]]; then
+      echo -n "\[$(tput setaf "$1")\]"
+    fi
+    if [[ ! -z "$2" ]]; then
+      echo -n "\[$(tput setab "$2")\]"
+    fi
+  }
 
-function _git_status() {
-  dirty_branch="$(_git_dirty)"
+  # -- prompt blocks helper ------------------------------------------------------
+  _prompt() {
+    # fg, bg, text 
+    local block
+    if [ ! -z "$lastbg" ]; then
+      block+="$(_color "$lastbg" "$2")"
+      block+="$BLOCK_START "
+    fi
+    block+="$(_color "$1" "$2")"
+    block+="$3"
+    _section="$block"
+    lastbg=$2
+  }
 
-  #  • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
-  if [[ "$dirty_branch" == 1 ]]; then
-    echo "${red}•${reset}"
-  else # clean
-    echo "${green}•${reset}"
-  fi
-}
+  # superuser or not, here I go!
+  _user() {
+    if [[ "$PROMPT_SIZE" != "wide" ]]; then
+      local user=$(whoami)
+      user="${user:0:4}"
+      local host=$(hostname)
+      host="${host: -6}"
+    else
+      local user=$(whoami)
+      local host="\h"
+    fi
+ 
+    if [ -z "$(id -u "$USER")" ]; then
+      c=9
+    else
+      c=25
+    fi
+    _prompt $c 15 "$user|$host"
+  }
 
-_git_info () {
-  local output="$(_git_branch)"
 
-  if [[ "$output" != "" ]]; then
-    # Add on the git status
-    output="$output$(_git_status)"
-    # Echo our output
-    echo "$output"
-  fi
-}
+  # -- git helper functions ------------------------------------------------------
+  function _git_branch() {
+    
+    local branch
+    ref="$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///')"
+    if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null); then
+      if [[ "$branch" == "HEAD" ]]; then
+         branch='detached'
+      fi
+      echo "$branch"
+    else
+      echo ""
+    fi
+  }
+  
+  function _git_dirty() {
+    if [[ -n "$(git status --porcelain 2> /dev/null)" ]]; then
+      echo 1
+    fi
+  }
+  
+  function _git_status() {
+    dirty_branch="$(_git_dirty)"
+    #  • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
+    if [[ "$dirty_branch" == 1 ]]; then
+      echo "${red}•${reset}"
+    else # clean
+      echo "${green}•${reset}"
+    fi
+  }
+  
+  _git_info () {
+    _section=''
+    branch=$(_git_branch)
+    if [[ "$branch" != "" ]]; then
+      dirty_branch="$(_git_dirty)"
+      if [[ "$dirty_branch" == 1 ]]; then
+         c=217
+      else 
+         c=150
+      fi
+      _prompt 239 $c $branch
+    fi
+  }
+  
+  # -- pwd helper functions ------------------------------------------------------
+  
+  function _pwd_info() {
+    _section=''
+    local dir=""
+    if [ $(pwd | grep -o '/' | wc -l) -gt 3 ]; then
+      dir=$(pwd | sed -e "s@$HOME@~@" | sed -E "s@([^/])[^/]+/@\1/@g")
+    else
+      dir=$(pwd)
+    fi
+    if [[ "$PROMPT_SIZE" != "wide" ]]; then
+      _prompt 239 152 "$dir"
+    else 
+      _prompt 239 152 "\w"
+    fi
+  }
+  
+  function _end_block() {
+    local end="\n▶"
+    if [[ "$PROMPT_SIZE" != "wide" ]]; then
+      end=""
+    fi
+    _prompt 4 "" "$end"
+    _section="${reset}$_section"
+  }
 
-## ----------------- directory helper functions ------------
-
-function _pwd() {
-  if [ $(pwd | grep -o '/' | wc -l) -gt 5 ]; then
-    #pwd | sed -e "s|/([^/]{,2})[^/]*|/\1|g"
-    pwd | sed -e "s@$HOME@~@" | sed -E "s@([^/])[^/]+/@\1/@g"
+  # -- PS1 prompt function -------------------------------------------------------
+  
+  function _prompt_wide
+  {
+    lastbg=''
+    PS1=''
+    _user && PS1+=$_section
+    _pwd_info && PS1+=$_section
+    _git_info && PS1+=$_section
+    _end_block && PS1+=$_section
+    PS1+="${reset}"
+  }
+  
+  function _prompt_short
+  {
+    local hostlen=6
+    local userlen=4
+    local sep="${gray}\[|\]${reset}"
+    local endchar="${blue}▶ ${reset}"
+    local user=$(whoami)
+    local user="${blue}${user:0:$userlen}${sep}"
+    local host=$(hostname)
+    local host="${cyan}${host: -$hostlen}${sep}"
+    local gitinfo="${purple}$(_git_info)${sep}"
+    local dirinfo="${blue}$(_pwd)${sep}"
+    PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
+  }
+  
+  
+  # -- seting prompts ------------------------------------------------------------
+  if [[ "$PROMPT_SIZE" == "wide" ]]; then
+    export PS2="${blue}... ${reset}"
+    export PS3="$(tput setaf 12)(select): $(tput sgr0)"
+    export PS4="$(tput setaf 3)\t|\u|$0|\$LINENO++ $(tput sgr0)"
+    PROMPT_COMMAND=_prompt_wide
   else
-    pwd
+    export PS2="${blue}> ${reset}"
+    export PS3="$(tput setaf 12)#? $(tput sgr0)"
+    export PS4="$(tput setaf 3)\t|\$LINENO+ $(tput sgr0)"
+    PROMPT_COMMAND=_prompt_short
   fi
+
 }
 
-
-## ------------------ defining PS1 prompt function ---------------------
-
-function _prompt_wide
-{
-  local sep="${gray}\[|\]${reset}"
-  local endchar="${blue}\n▶ ${reset}"
-  local user="${blue}\u${sep}"
-  local host=$(hostname)
-  local host="${cyan}\h${sep}"
-  local gitinfo="${purple}$(_git_info)${sep}"
-  local dirinfo="${blue}\w${sep}"
-  PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
-}
-
-function _prompt_short
-{
-  local hostlen=6
-  local userlen=4
-  local sep="${gray}\[|\]${reset}"
-  local endchar="${blue}▶ ${reset}"
-  local user=$(whoami)
-  local user="${blue}${user:0:$userlen}${sep}"
-  local host=$(hostname)
-  local host="${cyan}${host: -$hostlen}${sep}"
-  local gitinfo="${purple}$(_git_info)${sep}"
-  local dirinfo="${blue}$(_pwd)${sep}"
-  PS1="${user}${host}${dirinfo}${gitinfo}${endchar}"
-}
-
-
-## --------------- setting prompts ---------------------
-if [[ "$PROMPT_SIZE" == "wide" ]]; then
-  export PS2="${blue}... ${reset}"
-  export PS3="$(tput setaf 12)(select): $(tput sgr0)"
-  export PS4="$(tput setaf 3)\t|\u|$0|\$LINENO++ $(tput sgr0)"
-  PROMPT_COMMAND=_prompt_wide
-else
-  export PS2="${blue}> ${reset}"
-  export PS3="$(tput setaf 12)#? $(tput sgr0)"
-  export PS4="$(tput setaf 3)\t|\$LINENO+ $(tput sgr0)"
-  PROMPT_COMMAND=_prompt_short
-fi
+__powerline
+unset __powerline
