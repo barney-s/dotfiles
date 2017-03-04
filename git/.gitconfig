@@ -8,7 +8,6 @@
 [alias]
   abbrev = !sh -c 'git rev-parse --short ${1-`echo HEAD`}' -
   ack = grep --break --heading
-  amend = commit --amend -v
   both = diff HEAD
   br = branch
   ci = commit -v
@@ -21,7 +20,10 @@
 
   # requires Git 1.6.3 or later; %C(auto) requires Git 1.8.3 or later
 
-  no-edit = commit --amend --no-edit
+  ama = commit -a --amend -v --no-edit
+  # Amend the currently staged files to the latest commit
+  # amend = commit --amend --reuse-message=HEAD
+  reword = commit --amend --only -v --
 
   graph = log --graph --pretty=format:'%C(auto)%h%Creset%C(auto)%d%Creset %s %C(magenta bold)(%cr)%Creset %C(cyan)<%aN>%Creset'
   one = log --pretty=format:'%C(auto)%h%Creset%C(auto)%d%Creset %s %C(magenta bold)(%cr)%Creset %C(cyan)<%aN>%Creset'
@@ -31,7 +33,6 @@
   patch = add -p
 
   # requires Git 1.7.11.3 or later
-  reword = commit --amend --only -v --
 
   # requires Git 1.6.2 or later
   rollback = !sh -c 'git reset --merge HEAD~${1-1}' -
@@ -79,8 +80,6 @@
   branches = branch -a
   remotes = remote -v
 
-  # Amend the currently staged files to the latest commit
-  amend = commit --amend --reuse-message=HEAD
 
   # Credit an author on the latest commit
   credit = "!f() { git commit --amend --author \"$1 <$2>\" -C HEAD; }; f"
