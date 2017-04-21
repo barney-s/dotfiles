@@ -140,14 +140,22 @@ __setup_bash_prompt() {
 
   # superuser or not, here I go!
   _user() {
+    local user=$(whoami)
+    local host=$(hostname)
+    alternateuser=$(cat ~/.bash_ps_alternate | grep -w $user | cut -f2 -d\ )
+    alternatehost=$(cat ~/.bash_ps_alternate | grep "$host" | cut -f2 -d\ )
+    
+    if [[ "$alternateuser" != "" ]]; then
+       user=$alternateuser
+    fi
+    if [[ "$alternatehost" != "" ]]; then
+       host=$alternatehost
+    fi
+ 
     if [[ "$PROMPT_SIZE" != "wide" ]]; then
-      local user=$(whoami)
       user="${user:0:4}"
       local host=$(hostname)
-      host="${host: -6}"
-    else
-      local user=$(whoami)
-      local host="\h"
+      host="${host:-6}"
     fi
  
     if [ -z "$(id -u "$USER")" ]; then
@@ -203,6 +211,14 @@ __setup_bash_prompt() {
       _prompt 234 $c " $branch"
     fi
   }
+
+  # -- conda info ----------------------------------------------------------------
+  _conda_info () {
+    _section=''
+    if [[ "$CONDA_DEFAULT_ENV" != "" ]]; then
+      _prompt 238 223 "$CONDA_DEFAULT_ENV"
+    fi
+  }
   
   # -- pwd helper functions ------------------------------------------------------
   
@@ -239,6 +255,7 @@ __setup_bash_prompt() {
     _user && PS1+=$_section
     _pwd_info && PS1+=$_section
     _git_info && PS1+=$_section
+    _conda_info && PS1+=$_section
     _end_block && PS1+=$_section
     PS1+="${reset}"
   }
