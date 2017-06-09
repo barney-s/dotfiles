@@ -77,6 +77,7 @@ palette_print() {
 
 __setup_bash_prompt() {
   readonly BLOCK_START=''
+  #readonly BLOCK_START='▶'
   readonly MAX_PATH_LENGTH=30
   if tput setaf 1 &> /dev/null; then
      tput sgr0 &> /dev/null
@@ -142,8 +143,8 @@ __setup_bash_prompt() {
   _user() {
     local user=$(whoami)
     local host=$(hostname)
-    alternateuser=$(cat ~/.bash_ps_alternate | grep -w $user | cut -f2 -d\ )
-    alternatehost=$(cat ~/.bash_ps_alternate | grep "$host" | cut -f2 -d\ )
+    #alternateuser=$(cat ~/.bash_ps_alternate | grep -w $user | cut -f2 -d\ )
+    #alternatehost=$(cat ~/.bash_ps_alternate | grep "$host" | cut -f2 -d\ )
     
     if [[ "$alternateuser" != "" ]]; then
        user=$alternateuser

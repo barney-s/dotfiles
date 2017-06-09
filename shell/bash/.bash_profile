@@ -6,3 +6,5 @@ if [ -f ~/.bash_local_aliases ]; then
 fi
 # added by Anaconda3 4.2.0 installer
 export PATH="//anaconda/bin:$PATH"
+
+alias vim=nvim
