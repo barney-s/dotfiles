@@ -4,3 +4,5 @@ git/.gitconfig               ~/.gitconfig
 git/.gitignore               ~/.gitignore
 tmux/tmux.conf               ~/.tmux.conf
 tmux/tmux.theme              ~/.tmux.theme
+vim                          ~/.config/nvim
+vim/autoload                 ~/.local/share/nvim/site/autoload

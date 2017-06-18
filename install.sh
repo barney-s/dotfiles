@@ -39,9 +39,12 @@ function backup_config_files() {
     dst=${dst/#\~/$HOME}
     srcpath=$(dirname $src)
     mkdir -p $BACKUP_PATH/$srcpath
-    if [ -f $dst ]; then
+    if [ -d $dst ]; then
       echo "  - $dst"
-      cp $dst $BACKUP_PATH/$srcpath
+      cp $dst $BACKUP_PATH/$srcpath || true
+    else
+      echo "  -d $dst"
+      cp -r $dst $BACKUP_PATH/$srcpath || true
     fi
   done < $source_dir/$install_list
 }
@@ -52,8 +55,14 @@ function install_config_files() {
     src=$(echo $line | awk '{print $1}')
     dst=$(echo $line | awk '{print $2}')
     dst=${dst/#\~/$HOME}
-    echo "  + $dst"
-    cp $src $dst
+    if [ -f $dst ]; then
+      echo "  + $dst"
+      cp $src $dst
+    else
+      echo "  +d $dst"
+      mkdir -p $dst
+      cp -r $src/* $dst
+    fi
   done < $source_dir/$install_list
 }
 
