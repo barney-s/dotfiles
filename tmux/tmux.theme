@@ -1,0 +1,41 @@
+#!/bin/bash
+
+right_sep=''
+right_sep=''
+left_sep='|'
+left_sep='|'
+
+set-option -g status "on"
+
+# statusbar
+setw -g status-style "fg=#4a4a4a,bg=#d8d8d8,none"
+setw -g status-left-style "fg=#ffffff,bg=#a95d04,none"
+setw -g status-right-style "fg=#444444,bg=default,none"
+setw -g window-status-style "fg=#777777,bg=default,none"
+setw -g window-status-current-style "fg=#009900,bg=#ffffff,bold"
+setw -g window-status-last-style "fg=#990000,bg=default,none"
+
+# window
+setw -g window-active-style "bg=#ffffff"
+setw -g window-style "fg=default,bg=#efefef"
+
+# pane
+setw -g pane-border-style "fg=#aaaaaa,bg=default"
+setw -g pane-active-border-style "fg=#0088ff,bg=default"
+setw -g display-panes-colour "#00afff"
+setw -g display-panes-active-colour "#00afff"
+
+# message
+setw -g message-style "fg=#555555,bg=#ffff44,bold"
+setw -g message-command-style "fg=#ffff00,bg=#000000,bold"
+
+# window
+setw -g window-status-activity-style "fg=default,bg=default,underscore"
+setw -g window-status-bell-style "fg=#ffff00,bg=default,blink,bold"
+
+
+# status
+set-option -g status-left " #S "
+set-option -g status-right " #h | %m/%d | %H:%M "
+set-window-option -g window-status-current-format " #I*:#W "
+set-window-option -g window-status-format " #I:#W "
