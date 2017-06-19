@@ -39,13 +39,8 @@ function backup_config_files() {
     dst=${dst/#\~/$HOME}
     srcpath=$(dirname $src)
     mkdir -p $BACKUP_PATH/$srcpath
-    if [ -d $dst ]; then
-      echo "  - $dst"
-      cp $dst $BACKUP_PATH/$srcpath || true
-    else
-      echo "  -d $dst"
-      cp -r $dst $BACKUP_PATH/$srcpath || true
-    fi
+    echo "  - $dst"
+    cp -r $dst $BACKUP_PATH/$srcpath || true
   done < $source_dir/$install_list
 }
 
