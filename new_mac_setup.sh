@@ -7,6 +7,7 @@ function install_brew {
 
 function install_basic_sw {
   brew install neovim/neovim/neovim
+  sudo easy install neovim
   brew install tmux
   brew install git-review
 }
@@ -22,5 +23,5 @@ function install_nerd_fonts {
 # --- main ------------------------
 #install_brew
 #install_basic_sw
-install_nerd_fonts
+#install_nerd_fonts
 
