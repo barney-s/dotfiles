@@ -9,6 +9,7 @@ let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
     "set relativenumber
     let mapleader = "\<Space>"
     filetype plugin on
+    set hidden " allow switching buffers even if not written
 "}}
 
 " keymaps {{
@@ -26,6 +27,13 @@ let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
     nnoremap <leader>n :NERDTreeToggle<cr>
     nnoremap <leader>l :call NumberToggle()<cr>
     nnoremap <leader>t :TagbarToggle<CR>
+    nnoremap [b :bp<cr>
+    nnoremap ]b :bn<cr>
+    nnoremap gb :ls<cr>:b<space>
+    nnoremap [t :tabp<cr>
+    nnoremap ]t :tabn<cr>
+    nnoremap tn :tabnew<cr>
+    nnoremap ts :tab split<cr>
 " }}
 
 

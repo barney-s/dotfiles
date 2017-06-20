@@ -13,6 +13,8 @@ Plug 'rhysd/vim-clang-format'
 Plug 'w0rp/ale'
 Plug 'SirVer/ultisnips'
 Plug 'majutsushi/tagbar'
+Plug 'mhinz/vim-sayonara'
+Plug 'rakr/vim-one'
 
 " Colorschemes
 "Plug 'morhetz/gruvbox'
