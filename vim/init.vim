@@ -2,6 +2,9 @@ source ~/.config/nvim/vimplug.vim
 set background=light
 colorscheme summerfruit256
 
+let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
+
+
 " custom settings {{
     "set relativenumber
     let mapleader = "\<Space>"
@@ -21,6 +24,8 @@ colorscheme summerfruit256
     nnoremap <leader>ev :vsplit $MYVIMRC<cr>
     nnoremap <leader>sv :source $MYVIMRC<cr>
     nnoremap <leader>n :NERDTreeToggle<cr>
+    nnoremap <leader>l :call NumberToggle()<cr>
+    nnoremap <leader>t :TagbarToggle<CR>
 " }}
 
 
@@ -44,4 +49,20 @@ colorscheme summerfruit256
     let g:UltiSnipsEditSplit="vertical"
     let g:SuperTabContextDefaultCompletionType = "<c-n>"
     let g:SuperTabDefaultCompletionType = "<c-n>"
+" }}
+
+
+" Line Numbers {{
+function! NumberToggle()
+    if(&relativenumber == 1 && &number == 1)
+        set number
+        set norelativenumber
+    elseif (&number == 1 && &relativenumber == 0)
+        set norelativenumber
+        set nonumber
+    else
+        set number
+        set relativenumber
+    endif
+endfunction
 " }}

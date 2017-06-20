@@ -10,6 +10,7 @@ function install_basic_sw {
   sudo easy install neovim
   brew install tmux
   brew install git-review
+  brew install ctags
 }
 
 function install_nerd_fonts {

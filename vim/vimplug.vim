@@ -12,6 +12,7 @@ Plug 'mhinz/vim-startify'
 Plug 'rhysd/vim-clang-format'
 Plug 'w0rp/ale'
 Plug 'SirVer/ultisnips'
+Plug 'majutsushi/tagbar'
 
 " Colorschemes
 "Plug 'morhetz/gruvbox'
