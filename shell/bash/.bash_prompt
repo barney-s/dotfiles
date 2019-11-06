@@ -76,8 +76,7 @@ palette_print() {
 
 
 __setup_bash_prompt() {
-  readonly BLOCK_START=''
-  #readonly BLOCK_START='▶'
+  readonly BLOCK_START=''
   readonly MAX_PATH_LENGTH=30
   if tput setaf 1 &> /dev/null; then
      tput sgr0 &> /dev/null
@@ -108,11 +107,11 @@ __setup_bash_prompt() {
   if [[ "$PROMPT_COLORS" == "256" ]]; then
     # Save common color actions
     readonly bold="\[$(tput bold)\]"
-    readonly reset="\[$(tput sgr0)\]"
+    readonly terminator="\[$(tput sgr0)\]"
     readonly normal="\[$(tput bold)\]"
   else
     readonly bold=""
-    readonly reset="\033[m"
+    readonly terminator="\033[m"
     readonly blue="\033[1;34m"
     readonly white="\033[1;37m"
     readonly cyan="\033[1;36m"
@@ -142,7 +141,7 @@ __setup_bash_prompt() {
   # superuser or not, here I go!
   _user() {
     local user=$(whoami)
-    local host=$(hostname)
+    local host=$(hostname -s)
     #alternateuser=$(cat ~/.bash_ps_alternate | grep -w $user | cut -f2 -d\ )
     #alternatehost=$(cat ~/.bash_ps_alternate | grep "$host" | cut -f2 -d\ )
     
@@ -155,7 +154,7 @@ __setup_bash_prompt() {
  
     if [[ "$PROMPT_SIZE" != "wide" ]]; then
       user="${user:0:4}"
-      local host=$(hostname)
+      local host=$(hostname -s)
       host="${host:-6}"
     fi
  
@@ -193,9 +192,9 @@ __setup_bash_prompt() {
     dirty_branch="$(_git_dirty)"
     #  • ▶ → ⚡ * △ ▲ ▽ ▼ ⬡ ⬢
     if [[ "$dirty_branch" == 1 ]]; then
-      echo "${red}•${reset}"
+      echo "${red}•${terminator}"
     else # clean
-      echo "${green}•${reset}"
+      echo "${green}•${terminator}"
     fi
   }
   
@@ -209,7 +208,7 @@ __setup_bash_prompt() {
       else 
          c=150
       fi
-      _prompt 234 $c " $branch"
+      _prompt 234 $c "$branch"
     fi
   }
 
@@ -239,12 +238,12 @@ __setup_bash_prompt() {
   }
   
   function _end_block() {
-    local end="\n${bold}→ ${reset}"
+    local end="\n${bold}→ ${terminator}"
     if [[ "$PROMPT_SIZE" != "wide" ]]; then
       end=""
     fi
     _prompt 4 "" "$end"
-    _section="${reset}$_section"
+    _section="${terminator}$_section"
   }
 
   # -- PS1 prompt function -------------------------------------------------------
@@ -258,18 +257,18 @@ __setup_bash_prompt() {
     _git_info && PS1+=$_section
     _conda_info && PS1+=$_section
     _end_block && PS1+=$_section
-    PS1+="${reset}"
+    PS1+="${terminator}"
   }
   
   function _prompt_short
   {
     local hostlen=6
     local userlen=4
-    local sep="${gray}\[|\]${reset}"
-    local endchar="${blue}▶ ${reset}"
+    local sep="${gray}\[|\]${terminator}"
+    local endchar="${blue}▶ ${terminator}"
     local user=$(whoami)
     local user="${blue}${user:0:$userlen}${sep}"
-    local host=$(hostname)
+    local host=$(hostname -s)
     local host="${cyan}${host: -$hostlen}${sep}"
     local gitinfo="${purple}$(_git_info)${sep}"
     local dirinfo="${blue}$(_pwd)${sep}"
@@ -279,12 +278,12 @@ __setup_bash_prompt() {
   
   # -- seting prompts ------------------------------------------------------------
   if [[ "$PROMPT_SIZE" == "wide" ]]; then
-    export PS2="${blue}... ${reset}"
+    export PS2="${blue}... ${terminator}"
     export PS3="$(tput setaf 12)(select): $(tput sgr0)"
     export PS4="$(tput setaf 3)\t|\u|$0|\$LINENO++ $(tput sgr0)"
     PROMPT_COMMAND=_prompt_wide
   else
-    export PS2="${blue}> ${reset}"
+    export PS2="${blue}> ${terminator}"
     export PS3="$(tput setaf 12)#? $(tput sgr0)"
     export PS4="$(tput setaf 3)\t|\$LINENO+ $(tput sgr0)"
     PROMPT_COMMAND=_prompt_short

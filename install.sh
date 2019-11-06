@@ -22,6 +22,7 @@ Optional:
     -i,--install           install dotfiles
     -r,--restore <path>    restore from path to backup 
     -h,--help              usage
+    -g,--grab              update repo with current dotfiles
 END
 
 exit $1
@@ -44,13 +45,29 @@ function backup_config_files() {
   done < $source_dir/$install_list
 }
 
+function grab_config_files() {
+  echo "grabbing:"
+  while read line || [[ -n "$line" ]]; do
+    src=$(echo $line | awk '{print $1}')
+    dst=$(echo $line | awk '{print $2}')
+    dst=${dst/#\~/$HOME}
+    if [ -f $src ]; then
+      echo "  grab $dst"
+      cp $dst $src
+    else
+      echo "  grab dir $dst"
+      cp -r $dst/* $src
+    fi
+  done < $source_dir/$install_list
+}
+
 function install_config_files() {
   echo "installing:"
   while read line || [[ -n "$line" ]]; do
     src=$(echo $line | awk '{print $1}')
     dst=$(echo $line | awk '{print $2}')
     dst=${dst/#\~/$HOME}
-    if [ -f $dst ]; then
+    if [ -f $src ]; then
       echo "  + $dst"
       cp $src $dst
     else
@@ -85,6 +102,11 @@ function _install() {
 }
 
 
+function _grab() {
+  grab_config_files
+  echo "grabbed dotfiles"
+}
+
 function _restore() {
   export BACKUP_PATH=$1
   restore_config_files
@@ -109,6 +131,10 @@ case $key in
          usage 1
       fi
       _restore $2
+      shift
+      ;;
+    -g|--grab)
+      _grab
       shift
     ;;
     -h|--help)

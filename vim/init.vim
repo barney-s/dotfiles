@@ -2,7 +2,7 @@ source ~/.config/nvim/vimplug.vim
 set background=light
 colorscheme summerfruit256
 
-let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
+let g:tagbar_ctags_bin='ctags-exuberant'
 
 
 " custom settings {{
@@ -27,6 +27,9 @@ let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
     nnoremap <leader>n :NERDTreeToggle<cr>
     nnoremap <leader>l :call NumberToggle()<cr>
     nnoremap <leader>t :TagbarToggle<CR>
+    nnoremap <leader>f :Files<cr>
+    nnoremap <leader>s :Tags<cr>
+    nnoremap <leader>b :Buffers<cr>
     nnoremap [b :bp<cr>
     nnoremap ]b :bn<cr>
     nnoremap gb :ls<cr>:b<space>
@@ -41,8 +44,15 @@ let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
     "autocmd WinEnter * setlocal cursorline
     "autocmd WinLeave * setlocal nocursorline
 
-" goyo limelight {{
-    let g:goyo_width=120
+" w3m.vim {
+  "let g:w3m#option = '-o display_charset=utf-8 -dump -o frame=true  -o strict_iso2022=0 -o ucs_conv=1'
+" }
+
+" WMGraphviz {{
+    let g:WMGraphviz_output='png'
+" }}
+
+" goyo limelight {   let g:goyo_width=120
     autocmd! User GoyoEnter Limelight
     autocmd! User GoyoLeave Limelight!
 " }}
@@ -73,4 +83,11 @@ function! NumberToggle()
         set relativenumber
     endif
 endfunction
+" }}
+
+" fzf {{
+" }}
+
+" Deoplete {{
+"     let g:deoplete#enable_at_startup = 1
 " }}

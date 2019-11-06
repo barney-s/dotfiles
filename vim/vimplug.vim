@@ -15,7 +15,11 @@ Plug 'SirVer/ultisnips'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-sayonara'
 Plug 'rakr/vim-one'
-
+Plug 'fatih/vim-go'
+Plug 'yuratomo/w3m.vim'
+Plug 'tpope/vim-rhubarb'
+Plug 'wannesm/wmgraphviz.vim'
+Plug 'pedrohdz/vim-yaml-folds'
 " Colorschemes
 "Plug 'morhetz/gruvbox'
 "Plug 'vim-airline/vim-airline-themes'
