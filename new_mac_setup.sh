@@ -7,14 +7,14 @@ function install_brew {
 
 function install_basic_sw {
   brew install neovim/neovim/neovim
-  sudo easy install neovim
+  #sudo easy install neovim
   brew install tmux
   brew install git-review
   brew install ctags
 }
 
 function install_nerd_fonts {
-  brew tap caskroom/fonts
+  brew tap homebrew/cask-fonts
   brew cask install font-hack-nerd-font
   brew cask install font-dejavusansmono-nerd-font
 }
@@ -22,7 +22,7 @@ function install_nerd_fonts {
 
 
 # --- main ------------------------
-#install_brew
-#install_basic_sw
-#install_nerd_fonts
+install_brew
+install_basic_sw
+install_nerd_fonts
 
