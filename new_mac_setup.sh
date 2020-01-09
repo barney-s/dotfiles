@@ -11,6 +11,9 @@ function install_basic_sw {
   brew install tmux
   brew install git-review
   brew install ctags
+
+  python -m pip install --user --upgrade pynvim
+  python3 -m pip install --user --upgrade pynvim
 }
 
 function install_nerd_fonts {
@@ -19,10 +22,14 @@ function install_nerd_fonts {
   brew cask install font-dejavusansmono-nerd-font
 }
 
-
+function install_pip {
+   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+   sudo python get-pip.py
+}
 
 # --- main ------------------------
 install_brew
+install_pip
 install_basic_sw
 install_nerd_fonts
 
