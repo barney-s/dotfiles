@@ -8,7 +8,8 @@ if [ -f ~/.bash_local_aliases ]; then
 fi
 alias vim=nvim
 
-function agr { ag -0 -Q -l "$1" | xargs -0 perl  -pi.bak -e "s/\Q$1\E/$2/g"; }
+function agr { ag -0 -l "$1" | AGR_FROM="$1" AGR_TO="$2" xargs -r0 perl -pi -e 's/$ENV{AGR_FROM}/$ENV{AGR_TO}/g'; }
+
 export -f agr
 
 if command -v pyenv 1>/dev/null 2>&1; then

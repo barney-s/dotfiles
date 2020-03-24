@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -x
+=======
+#!/usr/bin/env bash 
+#set -x
 
 set -o errexit
 set -o pipefail
@@ -14,23 +17,24 @@ setup_golang ()
 
 clone_github_repo ()
 {
-  mkdir -p $1
-  cd $1
-  if [ -d $1/$2 ]; then
-    echo "$1/$2 already exists. Not cloning $3"
+  myrepo=git@github.com:barney-s/$2.git
+  if [ -d $3/$2 ]; then
+    echo "$3/$2 already exists. Not cloning ${myrepo}"
   else
-    git clone $3
+    mkdir -p $3
+    cd $3
+    git clone ${myrepo}
   fi
-  if [ "$4" != "" ]; then
-     cd $1/$2
-     git remote add upstream $4 && echo "Set upstream $4" || echo "upstream already exists"
-  fi
+  cd $3/$2
+  git remote add upstream $1/$2.git && echo "Set upstream $1/$2.git" || echo "upstream already exists"
 }
 
 setup_k8s_dev_env ()
 {
-  clone_github_repo $GOPATH/src/k8s.io kubernetes git@github.com:barney-s/kubernetes.git git@github.com:kubernetes/kubernetes.git
-  clone_github_repo $GOPATH/src/k8s.io enhancements git@github.com:barney-s/enhancements.git git@github.com:kubernetes/enhancements.git
+  clone_github_repo git@github.com:kubernetes kubernetes $GOPATH/src/k8s.io 
+  clone_github_repo git@github.com:kubernetes enhancements $GOPATH/src/k8s.io
+  clone_github_repo git@github.com:kubernetes-sigs application $GOPATH/src/github.com/kubernetes-sigs
+  clone_github_repo git@github.com:kubernetes-sigs kubebuilder $GOPATH/src/github.com/kubernetes-sigs
 }
 
 setup_golang
