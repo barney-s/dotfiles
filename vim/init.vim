@@ -1,6 +1,6 @@
 source ~/.config/nvim/vimplug.vim
 set background=light
-colorscheme summerfruit256
+colorscheme pencil
 
 let g:tagbar_ctags_bin='ctags-exuberant'
 
