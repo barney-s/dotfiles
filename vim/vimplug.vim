@@ -24,6 +24,8 @@ Plug 'pedrohdz/vim-yaml-folds'
 "Plug 'morhetz/gruvbox'
 "Plug 'vim-airline/vim-airline-themes'
 "Plug 'joshdick/onedark.vim'
+Plug 'skywind3000/asynctasks.vim'
+Plug 'skywind3000/asyncrun.vim'
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }

@@ -91,3 +91,7 @@ endfunction
 " Deoplete {{
 "     let g:deoplete#enable_at_startup = 1
 " }}
+
+" Asynctasks {{
+let g:asyncrun_open = 6
+" }}
