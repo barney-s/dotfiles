@@ -36,6 +36,21 @@ if has('nvim')
     Plug 'nathanalderson/yang.vim'
     Plug 'zchee/libclang-python3'
     Plug 'artur-shaik/vim-javacomplete2'
+    Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+        " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
+    Plug 'ncm2/ncm2'
+    Plug 'roxma/nvim-yarp'
+
+    " NOTE: you need to install completion sources to get completions. Check
+    " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+    Plug 'ncm2/ncm2-bufword'
+    Plug 'ncm2/ncm2-path'
+
+    Plug 'racer-rust/vim-racer'
+
 endif
 
 call plug#end()
