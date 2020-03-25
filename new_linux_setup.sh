@@ -1,22 +1,22 @@
 #!/bin/bash
+set -x
 
-# --- install basic sw ----------------------
-function install_brew {
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+function package_install {
+   which $1 || sudo apt-get install $2
 }
 
 function install_basic_sw {
-  brew install neovim/neovim/neovim
-  #sudo easy install neovim
-  brew install tmux
-  brew install git-review
-  brew install ctags
+  package_install nvim neovim
+  package_install tmux tmux
+  package_install git-review git-review
+  package_install ctags ctags
 
   # https://opensource.com/article/19/5/python-3-default-mac
   # https://xkcd.com/1987/
-  brew install pyenv
-  pyenv install 3.7.3
-  pyenv global 3.7.3
+  # TODO setup pyenv
+  #  brew install pyenv
+  #  pyenv install 3.7.3
+  #  pyenv global 3.7.3
   python -m pip install --user --upgrade pynvim
   python3 -m pip install --user --upgrade pynvim
 }
@@ -42,14 +42,8 @@ setup_zsh()
    git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
 }
 
-function install_nerd_fonts {
-  brew tap homebrew/cask-fonts
-  brew cask install font-hack-nerd-font
-  brew cask install font-dejavusansmono-nerd-font
-  brew cask install font-meslo-nerd-font
-}
-
 function install_pip {
+   which pip && return || true
    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
    sudo python get-pip.py
 }
@@ -60,7 +54,9 @@ install_rustlang()
    # get rustup
    # don't use hombrew
    curl https://sh.rustup.rs -sSf | sh
+   source ~/.zprofile
    rustup self update
+
    RUST_CHANNEL=nightly
    # get ${RUST_CHANNEL} compiler
    rustup update ${RUST_CHANNEL}
@@ -74,15 +70,11 @@ install_rustlang()
 
 install_golang() 
 {
-    curl --proto '=https' --tlsv1.2 -sSf https://dl.google.com/go/go1.14.1.darwin-amd64.pkg -o /tmp/go1.14.1.darwin-amd64.pkg
-    sudo installer -pkg /tmp/go1.14.1.darwin-amd64.pkg -target /
+  package_install go google-golang
 }
 
 # --- main ------------------------
 setup_zsh
-exit 0 
-
-install_brew
 install_pip
 install_basic_sw
 install_nerd_fonts
