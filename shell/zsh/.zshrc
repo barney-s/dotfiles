@@ -10,7 +10,7 @@ fi
 
 alias vim=nvim
 
-ZGEN_RESET_ON_CHANGE=(${HOME}/.zshrc ${HOME}/.zshrc.local)
+ZGEN_RESET_ON_CHANGE=(${HOME}/.zshrc)
 
 # if the init scipt doesn't exist
 if ! zgen saved; then
@@ -43,3 +43,5 @@ function agr { ag -0 -Q -l "$1" | xargs -0 perl  -pi.bak -e "s/\Q$1\E/$2/g"; }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+source ~/.zprofile
