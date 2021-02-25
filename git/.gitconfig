@@ -296,4 +296,5 @@
 #  # https://help.github.com/articles/signing-commits-using-gpg/
 #  gpgsign = true
 
-
+[http]
+       cookiefile = /usr/local/google/home/barni/.gitcookies

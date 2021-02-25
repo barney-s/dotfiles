@@ -1,6 +1,6 @@
 source ~/.config/nvim/vimplug.vim
 set background=light
-colorscheme pencil
+colorscheme summerfruit256
 
 let g:tagbar_ctags_bin='ctags-exuberant'
 
@@ -37,6 +37,9 @@ let g:tagbar_ctags_bin='ctags-exuberant'
     nnoremap ]t :tabn<cr>
     nnoremap tn :tabnew<cr>
     nnoremap ts :tab split<cr>
+
+    " -- Quit behaviour ------------------------------------
+    nnoremap zz :qa<cr>
 " }}
 
 
@@ -108,7 +111,7 @@ let g:LanguageClient_serverCommands = {
     \ 'go': ['go-langserver'] }
 noremap <silent> H :call LanguageClient_textDocument_hover()<CR>
 noremap <silent> Z :call LanguageClient_textDocument_definition()<CR>
-noremap <silent> R :call LanguageClient_textDocument_rename()<CR>
+noremap <leader> r :call LanguageClient_textDocument_rename()<CR>
 noremap <silent> S :call LanugageClient_textDocument_documentSymbol()<CR>
 " }}}
 

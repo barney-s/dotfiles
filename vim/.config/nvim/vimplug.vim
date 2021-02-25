@@ -20,12 +20,14 @@ Plug 'yuratomo/w3m.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'wannesm/wmgraphviz.vim'
 Plug 'pedrohdz/vim-yaml-folds'
+Plug 'skywind3000/asynctasks.vim'
+Plug 'skywind3000/asyncrun.vim'
 " Colorschemes
 "Plug 'morhetz/gruvbox'
 "Plug 'vim-airline/vim-airline-themes'
 "Plug 'joshdick/onedark.vim'
-Plug 'skywind3000/asynctasks.vim'
-Plug 'skywind3000/asyncrun.vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
+
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
