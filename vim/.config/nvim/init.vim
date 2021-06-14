@@ -1,49 +1,65 @@
+" Welcome to Vim (http://go/vim).
+"
+" Enable modern Vim features not compatible with Vi spec.
+set nocompatible
+
+" Use the 'google' package by default (see http://go/vim/packages).
+source /usr/share/vim/google/google.vim
+
 call plug#begin('~/.local/share/nvim/plugged')
 
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'ashfinal/vim-colors-paper'
-Plug 'mhinz/vim-startify'
-Plug 'rhysd/vim-clang-format'
+"Plug 'mhinz/vim-startify'
+"Plug 'rhysd/vim-clang-format'
 Plug 'w0rp/ale'
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-sayonara'
 Plug 'rakr/vim-one'
-Plug 'fatih/vim-go'
+"Plug 'fatih/vim-go'
 Plug 'yuratomo/w3m.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'wannesm/wmgraphviz.vim'
 Plug 'pedrohdz/vim-yaml-folds'
 Plug 'skywind3000/asynctasks.vim'
 Plug 'skywind3000/asyncrun.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+"Plug 'mhinz/vim-signify'
+
+
 " Colorschemes
 "Plug 'morhetz/gruvbox'
 "Plug 'vim-airline/vim-airline-themes'
 "Plug 'joshdick/onedark.vim'
+Plug 'chriskempson/base16'
 Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'jcherven/jummidark.vim'
+Plug 'mcmartelle/vim-monokai-bold'
+
 
 
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    Plug 'zchee/deoplete-jedi', { 'for' : [ 'python' ] }
-    Plug 'zchee/deoplete-clang', { 'for': [ 'c', 'cpp', 'h' ]}
+    "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    "Plug 'Shougo/deoplete-lsp'
+    "Plug 'zchee/deoplete-jedi', { 'for' : [ 'python' ] }
+    "Plug 'zchee/deoplete-clang', { 'for': [ 'c', 'cpp', 'h' ]}
     Plug 'Shougo/neoinclude.vim'
     Plug 'sbdchd/neoformat'
     Plug 'nathanalderson/yang.vim'
     Plug 'zchee/libclang-python3'
     Plug 'artur-shaik/vim-javacomplete2'
-    Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-        " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
+    "Plug 'neovim/nvim-lspconfig'
     Plug 'ncm2/ncm2'
     Plug 'roxma/nvim-yarp'
 
@@ -57,12 +73,36 @@ endif
 
 call plug#end()
 
+Glug csearch
+Glug blaze
+Glug blaze plugin[mappings]='<leader>b'
+Glug blazedeps auto_filetypes=`['go']`
+Glug codefmt plugin[mappings] gofmt_executable="goimports"
+Glug codefmt
+Glug codefmt-google enable_nclfmt
+Glug piper plugin[mappings]
+Glug g4
+Glug codefmt-google enable_gclfmt
+"Glug git5
+Glug ultisnips-google
+"Glug youcompleteme-google
+Glug critique plugin[mappings]
+Glug relatedfiles plugin[mappings]
+Glug syntastic-google
+Glug ft-cpp
+Glug ft-proto
+"Glug google-logo
+Glug grok
+Glug refactorer
+Glug whitespace
+Glug outline-window
 
 set background=light
 colorscheme summerfruit256
 
-let g:tagbar_ctags_bin='ctags-exuberant'
-
+"let g:tagbar_ctags_bin='ctags-exuberant'
+let g:signify_vcs_list = [ 'perforce' , 'git']
+let g:airline_theme='papercolor'
 
 " custom settings {{
     "set relativenumber
@@ -89,6 +129,8 @@ let g:tagbar_ctags_bin='ctags-exuberant'
     nnoremap <leader>f :Files<cr>
     nnoremap <leader>s :Tags<cr>
     nnoremap <leader>b :Buffers<cr>
+    nnoremap <leader><Right> <C-w>l
+    nnoremap <leader><Left> <C-w>h
     nnoremap [b :bp<cr>
     nnoremap ]b :bn<cr>
     nnoremap gb :ls<cr>:b<space>
@@ -96,6 +138,14 @@ let g:tagbar_ctags_bin='ctags-exuberant'
     nnoremap ]t :tabn<cr>
     nnoremap tn :tabnew<cr>
     nnoremap ts :tab split<cr>
+
+    " --- LSP shortcuts
+    nnoremap <C-]> :LspDefinition<CR>
+    nnoremap <C-\> :LspPeekDefinition<CR>
+    nnoremap <leader>] :LspHover<CR>
+
+    " --- Google
+    nnoremap <leader>o :GoogleOutlineWindow<CR>
 
     " -- Quit behaviour ------------------------------------
     nnoremap zz :qa<cr>
@@ -159,21 +209,6 @@ let g:asyncrun_open = 6
 " }}
 
 
-" << LSP >> {{{
-nnoremap <leader>lcs :LanguageClientStart<CR>
-" if you want it to turn on automatically
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_serverCommands = {
-    \ 'python': ['pyls'],
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-    \ 'javascript': ['javascript-typescript-stdio'],
-    \ 'go': ['go-langserver'] }
-noremap <silent> H :call LanguageClient_textDocument_hover()<CR>
-noremap <silent> Z :call LanguageClient_textDocument_definition()<CR>
-noremap <leader> r :call LanguageClient_textDocument_rename()<CR>
-noremap <silent> S :call LanugageClient_textDocument_documentSymbol()<CR>
-" }}}
-
 " {{{ ncm2
     " enable ncm2 for all buffers
     autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -193,3 +228,44 @@ augroup Racer
     autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
 augroup END
 " }}}
+
+" {{{ Language server setup
+    au User lsp_setup call lsp#register_server({
+    \ 'name': 'CiderLSP',
+    \ 'cmd': {server_info->[
+    \   '/google/bin/releases/cider/ciderlsp/ciderlsp',
+    \   '--tooltag=vim-lsp',
+    \   '--noforward_sync_responses',
+    \ ]},
+    \ 'allowlist': ['c', 'cpp', 'java', 'proto', 'textproto', 'go', 'python', 'swift'],
+    \})
+
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+
+    " Send async completion requests.
+    " WARNING: Might interfere with other completion plugins.
+    let g:lsp_async_completion = 1
+
+    " Enable UI for diagnostics
+    let g:lsp_signs_enabled = 1           " enable diagnostics signs in the gutter
+    let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
+
+    " Automatically show completion options
+    let g:asyncomplete_auto_popup = 1
+
+" }}}
+
+" {{{ Google autogroup
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  "autocmd FileType c,cpp,javascript AutoFormatBuffer clang-format
+  autocmd FileType go AutoFormatBuffer gofmt
+  "autocmd FileType markdown AutoFormatBuffer mdformat
+  autocmd FileType ncl AutoFormatBuffer nclfmt
+  "autocmd FileType borg AutoFormatBuffer gclfmt
+  "autocmd FileType gcl AutoFormatBuffer gclfmt
+  "autocmd FileType python AutoFormatBuffer pyformat
+  " Add more filetypes here
+augroup END
+" }}}
+
